@@ -192,39 +192,53 @@ These are used internally but may be useful for customization:
 - Handles inline and display math modes
 - Provides Enter/Escape keyboard shortcuts
 
-### WysiwygToolbar
+### UnifiedToolbar
+
+**File**: `src/components/toolbar/UnifiedToolbar.tsx`
+
+**Purpose**: Unified ribbon-style toolbar that works with both source and WYSIWYG editing modes.
+
+**Props**:
+- `editor: EditorInstance` - Tiptap Editor or CodeMirror EditorView instance
+- `mode: 'source' | 'wysiwyg'` - Current editing mode
+- `onMathInsert?: (displayMode: boolean) => void` - Math insertion callback
+- `hasFocus?: boolean` - Whether the editor currently has focus
+
+**Key Features**:
+- Ribbon interface with tabs (Home, Insert)
+- Grouped buttons by functionality
+- Color-coded sections for visual organization
+- Works with both CodeMirror (source) and Tiptap (WYSIWYG) editors
+- Adapts button behavior based on editor mode
+- Table insertion with automatic table exit handling
+
+**Ribbon Structure**:
+- **Home Tab**:
+  - Text Group: Bold, Italic, Underline, Code, Highlight, Strikethrough
+  - Headings Group: H1, H2, H3, Paragraph
+  - Lists Group: Bullet List, Numbered List, Blockquote
+  - History Group: Undo, Redo
+- **Insert Tab**:
+  - Elements Group: Table, Link, Remove Link
+  - Math Group: Inline Math, Display Math
+
+**Table Insertion**:
+- Automatically detects if cursor is inside a table
+- Exits table before inserting new table if needed
+- Uses `can().insertTable()` to check command availability
+- Supports unlimited table insertions per document
+
+**Dependencies**:
+- Tiptap Editor (for WYSIWYG mode)
+- CodeMirror EditorView (for source mode)
+
+### WysiwygToolbar (Deprecated)
 
 **File**: `src/components/toolbar/WysiwygToolbar.tsx`
 
-**Purpose**: Formatting toolbar for WYSIWYG editor.
+**Status**: ⚠️ Deprecated - Replaced by UnifiedToolbar
 
-**Props**:
-- `editor: Editor | null` - Tiptap editor instance
-
-**Key Features**:
-- Text formatting buttons
-- Heading buttons
-- List buttons
-- Math insertion buttons
-- Undo/redo buttons
-
-**Buttons**:
-- **Bold** (`\textbf{}`)
-- **Italic** (`\textit{}`)
-- **Underline** (`\underline{}`)
-- **Code** (`\texttt{}`)
-- **H1** (`\section{}`)
-- **H2** (`\subsection{}`)
-- **H3** (`\subsubsection{}`)
-- **Bullet List** (`itemize`)
-- **Numbered List** (`enumerate`)
-- **Inline Math** (`$...$`)
-- **Display Math** (`$$...$$`)
-- **Undo**
-- **Redo**
-
-**Dependencies**:
-- Tiptap editor instance
+**Note**: This component is kept for backward compatibility but UnifiedToolbar should be used for new implementations.
 
 ## Component Relationships
 
@@ -235,9 +249,15 @@ DualModeEditor
 └── Uses LatexPreview (optional)
 
 WysiwygEditor
-├── Uses WysiwygToolbar
+├── Uses UnifiedToolbar (via DualModeEditor)
 ├── Uses MathInputDialog (for math insertion)
 └── Uses LatexSerializer (for conversion)
+
+DualModeEditor
+├── Uses UnifiedToolbar (shared toolbar for both modes)
+├── Uses LatexEditor (source mode)
+├── Uses WysiwygEditor (wysiwyg mode)
+└── Uses LatexPreview (optional)
 
 LatexEditorWithPreview
 ├── Uses LatexEditor

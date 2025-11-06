@@ -91,6 +91,20 @@ export class LatexSerializer {
         continue;
       }
 
+      // Tables
+      if (line.startsWith('\\begin{table}')) {
+        if (currentParagraph.length > 0) {
+          nodes.push(this.createParagraphNode(currentParagraph.join(' ')));
+          currentParagraph = [];
+        }
+        const tableNode = this.parseTable(lines, i);
+        if (tableNode.node) {
+          nodes.push(tableNode.node);
+        }
+        i = tableNode.endIndex;
+        continue;
+      }
+
       // Regular content
       currentParagraph.push(line);
     }
@@ -218,11 +232,17 @@ export class LatexSerializer {
       const row = node.content[i];
       if (row.type === 'tableRow' && row.content) {
         const cells = row.content.map(cell => {
-          const cellText = this.extractText(cell);
-          return cellText.trim();
-        });
-        latex += cells.join(' & ') + ' \\\\\n';
-        latex += '\\hline\n';
+          // Handle both tableCell and tableHeader
+          if (cell.type === 'tableCell' || cell.type === 'tableHeader') {
+            const cellText = this.extractText(cell);
+            return cellText.trim();
+          }
+          return '';
+        }).filter(text => text !== '');
+        if (cells.length > 0) {
+          latex += cells.join(' & ') + ' \\\\\n';
+          latex += '\\hline\n';
+        }
       }
     }
 
@@ -443,6 +463,117 @@ export class LatexSerializer {
         content: items
       },
       endIndex: i
+    };
+  }
+
+  /**
+   * Parse a table environment
+   */
+  private parseTable(lines: string[], startIndex: number): { node: TiptapNode | null; endIndex: number } {
+    let i = startIndex;
+    let foundTabular = false;
+    let tabularStartIndex = -1;
+    let tabularEndIndex = -1;
+    let tableEndIndex = -1;
+
+    // Find the end of the table environment and locate tabular
+    while (i < lines.length) {
+      const line = lines[i].trim();
+      
+      if (line.startsWith('\\begin{tabular}')) {
+        foundTabular = true;
+        tabularStartIndex = i;
+      } else if (line.startsWith('\\end{tabular}')) {
+        tabularEndIndex = i;
+      } else if (line.startsWith('\\end{table}')) {
+        tableEndIndex = i;
+        break;
+      }
+      
+      i++;
+    }
+
+    if (!foundTabular || tabularStartIndex === -1 || tabularEndIndex === -1 || tableEndIndex === -1) {
+      return { node: null, endIndex: tableEndIndex >= 0 ? tableEndIndex : i };
+    }
+
+    // Extract tabular environment
+    const tabularLines = lines.slice(tabularStartIndex, tabularEndIndex + 1);
+    const tabularContent = tabularLines.join('\n');
+
+    // Parse column specification
+    const colSpecMatch = tabularContent.match(/\\begin\{tabular\}\{([^}]+)\}/);
+    if (!colSpecMatch) {
+      return { node: null, endIndex: tableEndIndex };
+    }
+
+    const colSpec = colSpecMatch[1];
+    // Count columns from spec (|c|c|c| -> 3 columns)
+    const columns = colSpec.split('|').filter(col => col.trim() !== '');
+    const colCount = columns.length > 0 ? columns.length : 1;
+
+    // Extract tabular body (between \begin{tabular} and \end{tabular})
+    const tabularBodyMatch = tabularContent.match(/\\begin\{tabular\}\{[^}]+\}([\s\S]*)\\end\{tabular\}/);
+    if (!tabularBodyMatch) {
+      return { node: null, endIndex: tableEndIndex };
+    }
+
+    const tabularBody = tabularBodyMatch[1];
+
+    // Parse rows
+    const rows: TiptapNode[] = [];
+    const rawRows = tabularBody.split('\\\\');
+    let isFirstDataRow = true;
+    
+    for (const rawRow of rawRows) {
+      const trimmed = rawRow.trim();
+      if (!trimmed || trimmed === '\\hline') continue;
+      
+      // Remove \hline from start/end
+      let cleanRow = trimmed.replace(/^\\hline\s*/, '').replace(/\s*\\hline$/, '');
+      cleanRow = cleanRow.replace(/\n/g, ' ').trim();
+      if (!cleanRow) continue;
+      
+      // Split by & to get cells
+      const cells = cleanRow.split('&').map(cell => cell.trim());
+      if (cells.length === 0 || cells.every(c => c === '')) continue;
+
+      // Create table cells - first row uses tableHeader, others use tableCell
+      const tableCells: TiptapNode[] = [];
+      const cellType = isFirstDataRow ? 'tableHeader' : 'tableCell';
+      
+      for (let j = 0; j < Math.max(cells.length, colCount); j++) {
+        const cellText = cells[j] || '';
+        // Parse cell content for formatting and math
+        const cellContent = this.parseInlineContent(cellText);
+        // Table cells must contain block nodes (paragraphs), not inline nodes directly
+        tableCells.push({
+          type: cellType,
+          content: [{
+            type: 'paragraph',
+            content: cellContent.length > 0 ? cellContent : [{ type: 'text', text: '' }]
+          }]
+        });
+      }
+
+      rows.push({
+        type: 'tableRow',
+        content: tableCells
+      });
+      
+      isFirstDataRow = false; // After first row, all subsequent rows are data rows
+    }
+
+    if (rows.length === 0) {
+      return { node: null, endIndex: tableEndIndex };
+    }
+
+    return {
+      node: {
+        type: 'table',
+        content: rows
+      },
+      endIndex: tableEndIndex
     };
   }
 

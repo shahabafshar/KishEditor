@@ -20,10 +20,11 @@ By naming our project after this historic artifact, we honor the origins of writ
 
 *KishEditor in Source mode with live preview - showing LaTeX syntax highlighting and real-time rendering*
 
-- **WYSIWYG Editor**: Visual editing with formatting toolbar (NEW!)
-- **Dual Mode**: Switch between Source and WYSIWYG modes seamlessly (NEW!)
-- **Visual Math Editor**: MathLive integration for intuitive equation editing (NEW!)
-- **Real-time Preview**: Live LaTeX rendering as you type
+- **WYSIWYG Editor**: Visual editing with modern ribbon toolbar interface
+- **Dual Mode**: Switch between Source and WYSIWYG modes seamlessly with content sync
+- **Visual Math Editor**: MathLive integration for intuitive equation editing
+- **Table Support**: Insert and edit tables with full round-trip conversion between modes
+- **Real-time Preview**: Live LaTeX rendering as you type with debounced updates
 - **Syntax Highlighting**: Full LaTeX syntax support via CodeMirror 6
 - **Math Rendering**: Beautiful math equations via KaTeX
 - **Client-Side**: No server required - everything runs in the browser

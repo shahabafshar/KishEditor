@@ -72,10 +72,14 @@ KishEditor provides a comprehensive set of features for LaTeX document editing. 
 ## Advanced Features
 
 ### Tables
-- **Table Creation**: Insert tables via toolbar
+- **Table Creation**: Insert tables via toolbar (unlimited tables per document)
 - **Table Editing**: Edit table cells inline
 - **Table Formatting**: Borders, alignment, and styling
-- **LaTeX Conversion**: Converts to `tabular` environment
+- **Multiple Tables**: Insert multiple tables anywhere in the document
+- **Round-Trip Conversion**: Tables preserve structure when switching between WYSIWYG and source modes
+- **LaTeX Conversion**: Converts to `tabular` environment with proper formatting
+- **Preview Rendering**: Tables display correctly in preview pane with captions and styling
+- **Table Parsing**: Automatically parses LaTeX table environments back to visual tables
 
 ### Links
 - **Hyperlinks**: Insert and edit hyperlinks

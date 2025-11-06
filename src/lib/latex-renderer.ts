@@ -51,7 +51,7 @@ export class LatexRenderer {
     // Process sections
     content = this.processSections(content);
 
-    // Process environments
+    // Process environments (including tables - must be before formatting)
     content = this.processEnvironments(content);
 
     // Process math (inline and display)
@@ -60,7 +60,7 @@ export class LatexRenderer {
     // Process basic formatting
     content = this.processFormatting(content);
 
-    // Process paragraphs
+    // Process paragraphs (must be last to avoid wrapping tables)
     content = this.processParagraphs(content);
 
     return `<div class="latex-document">${content}</div>`;
@@ -116,6 +116,140 @@ export class LatexRenderer {
     content = content.replace(
       /\\begin\{center\}([\s\S]*?)\\end\{center\}/g,
       '<div style="text-align: center;">$1</div>'
+    );
+
+    // Table environment - process tables
+    content = this.processTables(content);
+
+    return content;
+  }
+
+  /**
+   * Process LaTeX table environments
+   */
+  private processTables(content: string): string {
+    // Match table environment: \begin{table}...\begin{tabular}...\end{tabular}...\end{table}
+    content = content.replace(
+      /\\begin\{table\}(\[.*?\])?([\s\S]*?)\\end\{table\}/g,
+      (match, position, tableContent) => {
+        // Extract caption if present
+        const captionMatch = tableContent.match(/\\caption\{([^}]+)\}/);
+        const caption = captionMatch ? captionMatch[1] : null;
+        
+        // Extract tabular environment
+        const tabularMatch = tableContent.match(/\\begin\{tabular\}\{([^}]+)\}([\s\S]*?)\\end\{tabular\}/);
+        if (!tabularMatch) {
+          return match; // Return original if no tabular found
+        }
+
+        const columnSpec = tabularMatch[1];
+        const tableBody = tabularMatch[2];
+
+        // Parse column alignment from spec (|c|c|c| -> ['c', 'c', 'c'])
+        // Handle cases like |l|c|r| or lcr
+        const columns: string[] = [];
+        let currentCol = '';
+        for (let i = 0; i < columnSpec.length; i++) {
+          const char = columnSpec[i];
+          if (char === '|') {
+            if (currentCol) {
+              columns.push(currentCol);
+              currentCol = '';
+            }
+          } else if (['l', 'c', 'r', 'p', 'm', 'b'].includes(char)) {
+            currentCol += char;
+          }
+        }
+        if (currentCol) {
+          columns.push(currentCol);
+        }
+        
+        // If no columns found, default to center-aligned columns based on | count
+        if (columns.length === 0) {
+          const pipeCount = (columnSpec.match(/\|/g) || []).length;
+          const colCount = Math.max(1, pipeCount - 1);
+          columns.push(...Array(colCount).fill('c'));
+        }
+
+        // Process rows - split by \\ and handle \hline
+        const rows: string[][] = [];
+        // Split by lines first, then identify rows by \\ at end of line
+        const lines = tableBody.split('\n');
+        let currentRowCells: string[] = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+          let line = lines[i].trim();
+          
+          // Skip empty lines and standalone \hline
+          if (!line || line === '\\hline') {
+            if (currentRowCells.length > 0) {
+              rows.push(currentRowCells);
+              currentRowCells = [];
+            }
+            continue;
+          }
+          
+          // Remove \hline from start/end
+          line = line.replace(/^\\hline\s*/, '').replace(/\s*\\hline$/, '');
+          
+          // Check if line ends with \\ (row terminator)
+          const isRowEnd = line.endsWith('\\\\') || line.endsWith('\\');
+          if (isRowEnd) {
+            line = line.replace(/\\\\?$/, '').trim();
+          }
+          
+          // Split by & to get cells
+          const cells = line.split('&').map(cell => cell.trim());
+          if (cells.length > 0 && cells.some(c => c !== '')) {
+            currentRowCells.push(...cells);
+          }
+          
+          // If this was a row end or we have enough cells, finalize the row
+          if (isRowEnd && currentRowCells.length > 0) {
+            rows.push(currentRowCells);
+            currentRowCells = [];
+          }
+        }
+        
+        // Add any remaining cells as a final row
+        if (currentRowCells.length > 0) {
+          rows.push(currentRowCells);
+        }
+
+        // Build HTML table
+        let html = '<div class="latex-table-wrapper">';
+        html += '<table class="latex-table">';
+        
+        // Process each row
+        rows.forEach((cells, rowIndex) => {
+          if (cells.length === 0 || cells.every(c => c === '')) return;
+
+          html += '<tr>';
+          cells.forEach((cell, cellIndex) => {
+            const align = columns[cellIndex] || columns[columns.length - 1] || 'c';
+            let alignment = 'center';
+            if (align.includes('l')) alignment = 'left';
+            else if (align.includes('r')) alignment = 'right';
+
+            // First row is header if it's the first row
+            const tag = rowIndex === 0 ? 'th' : 'td';
+            // Process cell content for formatting
+            let cellContent = cell || '&nbsp;';
+            // Process formatting commands in cell
+            cellContent = this.processFormatting(cellContent);
+            html += `<${tag} style="text-align: ${alignment};">${cellContent}</${tag}>`;
+          });
+          html += '</tr>';
+        });
+
+        html += '</table>';
+        if (caption) {
+          html += `<div class="latex-table-caption">${this.escapeHtml(caption)}</div>`;
+        }
+        html += '</div>';
+
+        return html;
+      }
     );
 
     return content;
@@ -195,8 +329,8 @@ export class LatexRenderer {
       .map(p => {
         p = p.trim();
         if (!p) return '';
-        // Don't wrap if already in a block element
-        if (p.match(/^<(h[1-6]|ul|ol|pre|div)/)) {
+        // Don't wrap if already in a block element (including tables)
+        if (p.match(/^<(h[1-6]|ul|ol|pre|div|table)/)) {
           return p;
         }
         return `<p>${p}</p>`;

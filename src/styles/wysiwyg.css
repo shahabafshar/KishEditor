@@ -11,7 +11,237 @@
   overflow: hidden;
 }
 
-/* Toolbar Styles */
+/* Ribbon Toolbar Styles */
+.ribbon-toolbar {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-bottom: 1px solid #d0d0d0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  user-select: none;
+}
+
+/* Ribbon Tabs */
+.ribbon-tabs {
+  display: flex;
+  background: #f3f3f3;
+  border-bottom: 1px solid #d0d0d0;
+  padding: 0;
+  gap: 0;
+}
+
+.ribbon-tab {
+  padding: 8px 20px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  transition: all 0.15s ease;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.ribbon-tab:hover:not(.active) {
+  background: #e8e8e8;
+  color: #333;
+}
+
+.ribbon-tab.active {
+  background: #ffffff;
+  color: #1976d2;
+  border-bottom-color: #1976d2;
+}
+
+/* Ribbon Content */
+.ribbon-content {
+  display: flex;
+  gap: 0;
+  padding: 8px 12px;
+  background-color: #ffffff;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  min-height: 60px;
+}
+
+/* Ribbon Group */
+.ribbon-group {
+  display: flex;
+  flex-direction: column;
+  margin-right: 16px;
+  padding-right: 16px;
+  padding-left: 8px;
+  border-right: 1px solid #e8e8e8;
+  min-width: fit-content;
+  position: relative;
+}
+
+.ribbon-group:last-child {
+  margin-right: 0;
+  padding-right: 0;
+  border-right: none;
+}
+
+/* Color-coded group backgrounds */
+.ribbon-group-text {
+  background: linear-gradient(to right, rgba(33, 150, 243, 0.05), transparent);
+}
+
+.ribbon-group-structure {
+  background: linear-gradient(to right, rgba(156, 39, 176, 0.05), transparent);
+}
+
+.ribbon-group-lists {
+  background: linear-gradient(to right, rgba(76, 175, 80, 0.05), transparent);
+}
+
+.ribbon-group-history {
+  background: linear-gradient(to right, rgba(255, 152, 0, 0.05), transparent);
+}
+
+.ribbon-group-elements {
+  background: linear-gradient(to right, rgba(0, 188, 212, 0.05), transparent);
+}
+
+.ribbon-group-math {
+  background: linear-gradient(to right, rgba(233, 30, 99, 0.05), transparent);
+}
+
+.ribbon-group-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  text-align: center;
+  letter-spacing: 0.5px;
+  padding: 0 2px;
+  white-space: nowrap;
+}
+
+/* Ribbon Group Content */
+.ribbon-group-content {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Ribbon Button - Compact Office-style */
+.ribbon-button {
+  padding: 4px 8px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.1s ease;
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  position: relative;
+}
+
+.ribbon-button:hover:not(:disabled) {
+  background: #e8e8e8;
+  border-color: #c0c0c0;
+}
+
+.ribbon-button:active:not(:disabled) {
+  background: #d0d0d0;
+  border-color: #a0a0a0;
+}
+
+.ribbon-button.active {
+  background: #d0e8ff;
+  border-color: #90caf9;
+  color: #1565c0;
+}
+
+.ribbon-button.active:hover:not(:disabled) {
+  background: #b8dfff;
+  border-color: #64b5f6;
+}
+
+.ribbon-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background-color: transparent;
+}
+
+.ribbon-button:disabled:hover {
+  transform: none;
+  box-shadow: none;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+/* Button content styling */
+.ribbon-button strong,
+.ribbon-button em,
+.ribbon-button u,
+.ribbon-button code,
+.ribbon-button s {
+  font-weight: inherit;
+  font-style: inherit;
+  text-decoration: inherit;
+  font-family: inherit;
+}
+
+.ribbon-button code {
+  background: transparent;
+  padding: 0;
+  font-size: 12px;
+}
+
+/* Special button styling for better visual hierarchy */
+.ribbon-button[title*="Bold"],
+.ribbon-button[title*="Italic"],
+.ribbon-button[title*="Underline"] {
+  font-weight: 600;
+}
+
+/* Responsive ribbon adjustments */
+@media (max-width: 768px) {
+  .ribbon-content {
+    padding: 6px 8px;
+    min-height: 50px;
+  }
+  
+  .ribbon-group {
+    margin-right: 12px;
+    padding-right: 12px;
+    padding-left: 4px;
+  }
+  
+  .ribbon-tab {
+    padding: 6px 16px;
+    font-size: 11px;
+  }
+  
+  .ribbon-button {
+    min-width: 24px;
+    height: 24px;
+    padding: 3px 6px;
+    font-size: 12px;
+  }
+  
+  .ribbon-group-label {
+    font-size: 8px;
+    margin-bottom: 4px;
+  }
+}
+
+/* Legacy toolbar class support (for backward compatibility) */
 .wysiwyg-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -73,7 +303,7 @@
 /* Editor Content Styles */
 /* Tiptap's EditorContent creates a wrapper div - ensure it's flex */
 /* Exclude the toolbar by using :not() selector */
-.wysiwyg-editor-container > div:not(.wysiwyg-toolbar) {
+.wysiwyg-editor-container > div:not(.wysiwyg-toolbar):not(.ribbon-toolbar) {
   flex: 1;
   display: flex;
   flex-direction: column;

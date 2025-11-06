@@ -2,6 +2,104 @@
 
 ## Date: 2025-11-06
 
+## Latest Updates (2025-01-XX)
+
+### Table Improvements ✅
+
+#### 1. Multiple Table Insertion Fix
+**Problem**: After inserting one table, the table insertion button became unresponsive and couldn't insert a second table.
+
+**Solution**: 
+- Added command availability check using `tiptapEditor.can().insertTable()` 
+- When cursor is inside a table, automatically exits the table before inserting a new one
+- Improved focus handling to ensure editor maintains focus during table insertion
+- Changed button disabled condition from `!isEditorReady` to `!editor` to allow insertion even when focus is temporarily lost
+
+**Files Modified**:
+- [src/components/toolbar/UnifiedToolbar.tsx](src/components/toolbar/UnifiedToolbar.tsx)
+
+**Technical Details**:
+- Uses async handler to wait for focus establishment
+- Checks if `insertTable` command is available before attempting insertion
+- If command unavailable (cursor inside table), finds table node and moves cursor after it
+- Inserts a paragraph separator before inserting new table for proper spacing
+
+#### 2. Table Round-Trip Conversion Fix
+**Problem**: Tables inserted in WYSIWYG mode were destroyed when switching to source mode and back to WYSIWYG mode.
+
+**Solution**:
+- Added `parseTable()` method to `LatexSerializer` to parse LaTeX table environments back to Tiptap table nodes
+- Updated `fromLatex()` to detect and parse `\begin{table}...\end{table}` blocks
+- Properly handles table headers vs regular cells
+- Correctly parses column specifications, row separators, and cell content
+
+**Files Modified**:
+- [src/lib/latex-serializer.ts](src/lib/latex-serializer.ts)
+
+**Technical Details**:
+- Parses `tabular` environment within `table` environment
+- Extracts column alignment from column specification (e.g., `|l|c|r|`)
+- Handles `\hline` commands and row separators (`\\`)
+- First row is treated as header row with `tableHeader` cells
+- Subsequent rows use `tableCell` cells
+- Table cells contain paragraph nodes with inline content
+
+#### 3. Table Rendering in Preview
+**Problem**: Tables were not rendering properly in the preview pane.
+
+**Solution**:
+- Added `processTables()` method to `LatexRenderer` to convert LaTeX tables to HTML
+- Processes `\begin{table}` and `\begin{tabular}` environments
+- Extracts captions and column alignments
+- Converts to HTML `<table>` elements with proper styling
+- Added comprehensive CSS styles for table display
+
+**Files Modified**:
+- [src/lib/latex-renderer.ts](src/lib/latex-renderer.ts)
+- [src/styles/preview.css](src/styles/preview.css)
+
+**Technical Details**:
+- Parses table structure including headers, rows, and cells
+- Handles column alignment (left, center, right)
+- Processes cell content for formatting (bold, italic, etc.)
+- Renders captions below tables
+- Tables are processed before paragraphs to avoid wrapping in `<p>` tags
+
+#### 4. Ribbon Toolbar Interface
+**Description**: Replaced traditional toolbar with modern ribbon interface.
+
+**Features**:
+- Tabbed interface with "Home" and "Insert" tabs
+- Grouped buttons by functionality (Text, Headings, Lists, History, Elements, Math)
+- Color-coded sections for visual organization
+- Vertically compact design to save space
+- Improved button styling and hover effects
+
+**Files Modified**:
+- [src/components/toolbar/UnifiedToolbar.tsx](src/components/toolbar/UnifiedToolbar.tsx)
+- [src/styles/wysiwyg.css](src/styles/wysiwyg.css)
+
+**Ribbon Structure**:
+```
+┌─────────────────────────────────────────────────────────────┐
+│ [Home] [Insert]                                             │
+├─────────────────────────────────────────────────────────────┤
+│ Text        │ Headings │ Lists    │ History                │
+│ [B][I][U]...│ [H1][H2] │ [•][1.]  │ [↶][↷]                │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Known Issues Resolved
+
+1. ✅ **Table insertion after first table**: Fixed - can now insert unlimited tables
+2. ✅ **Table destruction on mode switch**: Fixed - tables preserve structure when switching modes
+3. ✅ **Table preview rendering**: Fixed - tables display correctly in preview pane
+4. ✅ **Table button disabled state**: Fixed - button remains enabled for multiple insertions
+
+---
+
+## Date: 2025-11-06
+
 ## Issues Fixed
 
 ### 1. Initial Mode Loading Issue ✅
@@ -27,29 +125,42 @@
 ## New Features Added
 
 ### 1. Table Support ✅
-**Description**: Full table editing capabilities in WYSIWYG mode.
+**Description**: Full table editing capabilities in WYSIWYG mode with complete round-trip conversion.
 
 **Features**:
 - Insert tables with toolbar button (3x3 with header row by default)
+- **Multiple table insertion**: Can insert unlimited tables in a document
 - Resizable tables
 - Table cells are editable inline
+- **Round-trip conversion**: Tables preserve structure when switching between WYSIWYG and source modes
 - Converts to LaTeX `tabular` environment
 - Full styling with borders and hover effects
+- **Preview rendering**: Tables display correctly in preview pane with proper formatting
 
 **Toolbar Button**: ⊞ (Table grid icon)
 
 **LaTeX Conversion**:
 ```latex
 \begin{table}[h]
-\centering
-\begin{tabular}{|c|c|c|}
-\hline
-Cell 1 & Cell 2 & Cell 3 \\
-\hline
-...
-\end{tabular}
+  \centering
+  \begin{tabular}{|l|c|r|}
+    \hline
+    Header 1 & Header 2 & Header 3 \\
+    \hline
+    Cell 1 & Cell 2 & Cell 3 \\
+    \hline
+    Cell 4 & Cell 5 & Cell 6 \\
+    \hline
+  \end{tabular}
+  \caption{Table caption}
 \end{table}
 ```
+
+**Table Parsing**:
+- Automatically detects and parses LaTeX table environments
+- Converts back to Tiptap table nodes with proper structure
+- Preserves header rows and cell content
+- Handles column alignment specifications
 
 ### 2. Enhanced Text Formatting ✅
 
