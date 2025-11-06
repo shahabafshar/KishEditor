@@ -1,0 +1,55 @@
+.latex-editor-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.latex-editor {
+  flex: 1;
+  overflow: auto;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.cm-editor {
+  height: 100%;
+}
+
+.cm-scroller {
+  overflow: auto;
+}
+
+.cm-content {
+  padding: 10px 0;
+}
+
+.cm-line {
+  padding: 0 10px;
+}
+
+/* LaTeX syntax highlighting */
+.cm-latex-command {
+  color: #0066cc;
+  font-weight: bold;
+}
+
+.cm-latex-environment {
+  color: #008800;
+}
+
+.cm-latex-math {
+  color: #cc0066;
+}
+
+.cm-latex-comment {
+  color: #999999;
+  font-style: italic;
+}
+
+.cm-latex-bracket {
+  color: #666666;
+}
