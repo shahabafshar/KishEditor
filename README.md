@@ -2,6 +2,18 @@
 
 A lightweight, client-side LaTeX editor with live preview and **WYSIWYG mode** that can be easily integrated into any React project. Built with React, TypeScript, CodeMirror 6, Tiptap, MathLive, and KaTeX.
 
+## About the Name
+
+**KishEditor** is named in tribute to the historic **Kish tablet**, one of the earliest known examples of proto-writing, dating back to approximately **3500 BCE**. Discovered in the ruins of the Sumerian city of Kish (located in present-day Iraq), this limestone tablet features pictographic symbols that represent a pivotal transitional phase between proto-writing and the more sophisticated cuneiform script.
+
+![Kish Tablet](assets/kish-tablet.png)
+
+*The Kish tablet, one of the earliest known examples of writing. The original limestone tablet is housed at the Ashmolean Museum, Oxford.*
+
+The Kish tablet marks a monumental moment in the history of human communication, illustrating the evolution from simple pictographs to complex writing systems. The symbols on the tablet, though not fully deciphered, are believed to depict various objects and activities, reflecting the administrative and economic practices of ancient Mesopotamia.
+
+By naming our project after this historic artifact, we honor the origins of written communication and draw inspiration from humanity's enduring quest to record, preserve, and share knowledge—a mission that continues in the digital age through tools like KishEditor.
+
 ## Features
 
 - **WYSIWYG Editor**: Visual editing with formatting toolbar (NEW!)
