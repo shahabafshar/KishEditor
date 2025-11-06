@@ -16,6 +16,10 @@ By naming our project after this historic artifact, we honor the origins of writ
 
 ## Features
 
+![KishEditor Source View](assets/kish-editor-source-view.png)
+
+*KishEditor in Source mode with live preview - showing LaTeX syntax highlighting and real-time rendering*
+
 - **WYSIWYG Editor**: Visual editing with formatting toolbar (NEW!)
 - **Dual Mode**: Switch between Source and WYSIWYG modes seamlessly (NEW!)
 - **Visual Math Editor**: MathLive integration for intuitive equation editing (NEW!)
