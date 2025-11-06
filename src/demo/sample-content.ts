@@ -15,7 +15,7 @@ export const sampleArticle = `\\documentclass{article}
 
 \\section{Introduction}
 
-This is a sample LaTeX document demonstrating the capabilities of the client-side Overleaf clone.
+This is a sample LaTeX document demonstrating the capabilities of KishEditor.
 
 \\section{Mathematical Expressions}
 

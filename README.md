@@ -1,9 +1,12 @@
-# OverLeaf Clone - Client-Side LaTeX Editor
+# KishEditor - Client-Side LaTeX Editor
 
-A lightweight, client-side LaTeX editor with live preview that can be easily integrated into any React project. Built with React, TypeScript, CodeMirror 6, and KaTeX.
+A lightweight, client-side LaTeX editor with live preview and **WYSIWYG mode** that can be easily integrated into any React project. Built with React, TypeScript, CodeMirror 6, Tiptap, MathLive, and KaTeX.
 
 ## Features
 
+- **WYSIWYG Editor**: Visual editing with formatting toolbar (NEW!)
+- **Dual Mode**: Switch between Source and WYSIWYG modes seamlessly (NEW!)
+- **Visual Math Editor**: MathLive integration for intuitive equation editing (NEW!)
 - **Real-time Preview**: Live LaTeX rendering as you type
 - **Syntax Highlighting**: Full LaTeX syntax support via CodeMirror 6
 - **Math Rendering**: Beautiful math equations via KaTeX
@@ -15,9 +18,9 @@ A lightweight, client-side LaTeX editor with live preview that can be easily int
 ## Installation
 
 ```bash
-npm install overleaf-clone
+npm install kish-editor
 # or
-yarn add overleaf-clone
+yarn add kish-editor
 ```
 
 For local development:
@@ -29,11 +32,56 @@ npm run dev
 
 ## Quick Start
 
+### WYSIWYG Mode with Source Toggle (Recommended)
+
+```tsx
+import React from 'react';
+import { DualModeEditor } from 'kish-editor';
+import 'kish-editor/dist/style.css'; // Import styles
+
+function App() {
+  const [content, setContent] = React.useState(`
+\\documentclass{article}
+\\begin{document}
+\\section{Hello World}
+This is a sample document with $E = mc^2$!
+\\end{document}
+  `);
+
+  return (
+    <DualModeEditor
+      initialContent={content}
+      onChange={setContent}
+      height="600px"
+      initialMode="wysiwyg" // or "source"
+      showPreview={true}
+    />
+  );
+}
+```
+
+### WYSIWYG Editor Only
+
+```tsx
+import React from 'react';
+import { WysiwygEditor } from 'kish-editor';
+
+function App() {
+  return (
+    <WysiwygEditor
+      initialContent="\\section{Hello World}"
+      onChange={(latex) => console.log(latex)}
+      height="600px"
+    />
+  );
+}
+```
+
 ### Basic Usage - Combined Editor with Preview
 
 ```tsx
 import React from 'react';
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 function App() {
   const [content, setContent] = React.useState(`
@@ -57,7 +105,7 @@ Hello World! $E = mc^2$
 
 ```tsx
 import React from 'react';
-import { LatexEditor, LatexPreview } from 'overleaf-clone';
+import { LatexEditor, LatexPreview } from 'kish-editor';
 
 function App() {
   const [content, setContent] = React.useState('');
@@ -82,7 +130,7 @@ function App() {
 
 ```tsx
 import React from 'react';
-import { LatexEditor } from 'overleaf-clone';
+import { LatexEditor } from 'kish-editor';
 
 function App() {
   return (
@@ -140,6 +188,43 @@ Preview component for rendering LaTeX.
 | `className` | `string` | `''` | Custom CSS class |
 | `onError` | `(error: Error) => void` | - | Callback for rendering errors |
 
+### DualModeEditor (NEW!)
+
+Complete editor with WYSIWYG and Source mode toggle.
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `initialContent` | `string` | `''` | Initial LaTeX content |
+| `onChange` | `(content: string) => void` | - | Callback when content changes |
+| `height` | `string` | `'600px'` | Height of the component |
+| `className` | `string` | `''` | Custom CSS class |
+| `initialMode` | `'source' \| 'wysiwyg'` | `'source'` | Initial editor mode |
+| `onModeChange` | `(mode: EditorMode) => void` | - | Callback when mode changes |
+| `showPreview` | `boolean` | `true` | Show/hide preview panel |
+
+### WysiwygEditor (NEW!)
+
+Visual WYSIWYG editor with formatting toolbar.
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `initialContent` | `string` | `''` | Initial LaTeX content |
+| `onChange` | `(content: string) => void` | - | Callback when content changes |
+| `height` | `string` | `'600px'` | Height of the editor |
+| `className` | `string` | `''` | Custom CSS class |
+| `readOnly` | `boolean` | `false` | Read-only mode |
+
+**Features:**
+- Text formatting (bold, italic, underline, code)
+- Headings (H1, H2, H3)
+- Lists (bullet and numbered)
+- Visual math equation editor (MathLive)
+- Undo/redo support
+
 ## Advanced Usage
 
 ### Custom Debounce
@@ -170,7 +255,7 @@ Control how often the preview updates:
 ### Using the Renderer Directly
 
 ```tsx
-import { LatexRenderer } from 'overleaf-clone';
+import { LatexRenderer } from 'kish-editor';
 
 const renderer = new LatexRenderer({
   strict: false,
@@ -192,7 +277,7 @@ const html = renderer.render('$x \\in \\R$');
 3. Use them like any other React component
 
 ```tsx
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 function MyEditor() {
   return <LatexEditorWithPreview />;
@@ -207,7 +292,7 @@ function MyEditor() {
 import dynamic from 'next/dynamic';
 
 const LatexEditor = dynamic(
-  () => import('overleaf-clone').then(mod => mod.LatexEditorWithPreview),
+  () => import('kish-editor').then(mod => mod.LatexEditorWithPreview),
   { ssr: false }
 );
 

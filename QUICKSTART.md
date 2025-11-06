@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get up and running with the Overleaf Clone in minutes!
+Get up and running with KishEditor in minutes!
 
 ## 1. Run the Demo Locally
 
@@ -32,13 +32,13 @@ npm run build:lib
 ### Install
 
 ```bash
-npm install overleaf-clone
+npm install kish-editor
 ```
 
 ### Basic Usage
 
 ```tsx
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 function App() {
   return (
@@ -53,7 +53,7 @@ function App() {
 ## 4. Customize
 
 ```tsx
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 function CustomEditor() {
   const [content, setContent] = React.useState('');

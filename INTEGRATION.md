@@ -1,6 +1,6 @@
 # Integration Guide
 
-This guide provides detailed examples of how to integrate the OverLeaf Clone into various project types.
+This guide provides detailed examples of how to integrate KishEditor into various project types.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ This guide provides detailed examples of how to integrate the OverLeaf Clone int
 
 ```tsx
 import React, { useState } from 'react';
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 export function MyLatexEditor() {
   const [content, setContent] = useState('\\section{Hello}');
@@ -38,7 +38,7 @@ export function MyLatexEditor() {
 
 ```tsx
 import React, { useState, useCallback } from 'react';
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 export function EditorWithSave() {
   const [content, setContent] = useState('');
@@ -84,10 +84,10 @@ Create a client component:
 'use client';
 
 import dynamic from 'next/dynamic';
-import { LatexEditorWithPreviewProps } from 'overleaf-clone';
+import { LatexEditorWithPreviewProps } from 'kish-editor';
 
 const LatexEditorWithPreview = dynamic(
-  () => import('overleaf-clone').then(mod => mod.LatexEditorWithPreview),
+  () => import('kish-editor').then(mod => mod.LatexEditorWithPreview);
   {
     ssr: false,
     loading: () => <div>Loading editor...</div>
@@ -124,7 +124,7 @@ export default function EditorPage() {
 import dynamic from 'next/dynamic';
 
 const LatexEditor = dynamic(
-  () => import('overleaf-clone').then(mod => mod.LatexEditorWithPreview),
+  () => import('kish-editor').then(mod => mod.LatexEditorWithPreview);
   { ssr: false }
 );
 
@@ -138,7 +138,7 @@ export default function EditorPage() {
 Vite works out of the box. Just import and use:
 
 ```tsx
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 function App() {
   return <LatexEditorWithPreview />;
@@ -151,7 +151,7 @@ CRA works without additional configuration:
 
 ```tsx
 import React from 'react';
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 function App() {
   return (
@@ -172,7 +172,7 @@ If you're using TypeScript, the types are included automatically. For better int
 import type {
   LatexEditorProps,
   LatexEditorWithPreviewProps
-} from 'overleaf-clone';
+} from 'kish-editor';
 
 const editorConfig: LatexEditorWithPreviewProps = {
   initialContent: '\\section{Title}',
@@ -227,7 +227,7 @@ function MyEditor() {
 
 // MyEditor.tsx
 import styles from './MyEditor.module.css';
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 export function MyEditor() {
   return (
@@ -242,7 +242,7 @@ export function MyEditor() {
 
 ```tsx
 import styled from 'styled-components';
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 const StyledEditorContainer = styled.div`
   .latex-split-view {
@@ -297,7 +297,7 @@ export const useEditor = () => {
 };
 
 // Usage
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 function EditorComponent() {
   const { content, setContent } = useEditor();
@@ -341,7 +341,7 @@ export default editorSlice.reducer;
 // EditorComponent.tsx
 import { useDispatch, useSelector } from 'react-redux';
 import { setContent } from './editorSlice';
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 function EditorComponent() {
   const dispatch = useDispatch();
@@ -360,7 +360,7 @@ function EditorComponent() {
 
 ```tsx
 import React, { useState, useEffect } from 'react';
-import { LatexEditorWithPreview } from 'overleaf-clone';
+import { LatexEditorWithPreview } from 'kish-editor';
 
 function PersistentEditor() {
   const [content, setContent] = useState(() => {
@@ -390,7 +390,7 @@ If you get "Module not found" errors:
 
 1. Ensure the package is installed:
    ```bash
-   npm install overleaf-clone
+   npm install kish-editor
    ```
 
 2. Clear cache and reinstall:
@@ -407,7 +407,7 @@ If styles aren't applied:
 2. Check if your bundler supports CSS imports
 3. For some setups, you may need to import styles explicitly:
    ```tsx
-   import 'overleaf-clone/dist/style.css';
+   import 'kish-editor/dist/style.css';
    ```
 
 ### SSR Issues (Next.js)
@@ -416,7 +416,7 @@ Always use dynamic imports with `ssr: false` for Next.js:
 
 ```tsx
 const LatexEditor = dynamic(
-  () => import('overleaf-clone').then(mod => mod.LatexEditorWithPreview),
+  () => import('kish-editor').then(mod => mod.LatexEditorWithPreview);
   { ssr: false }
 );
 ```

@@ -18,8 +18,8 @@ export default defineConfig(({ mode }) => {
     build: isLib ? {
       lib: {
         entry: resolve(__dirname, 'src/index.ts'),
-        name: 'OverleafClone',
-        fileName: (format) => `overleaf-clone.${format}.js`,
+        name: 'KishEditor',
+        fileName: (format) => `kish-editor.${format}.js`,
         formats: ['es', 'umd']
       },
       rollupOptions: {
